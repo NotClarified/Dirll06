@@ -41,23 +41,28 @@ def mouse_events():
 def character_move():
     global  point_x, point_y
     global character_x, character_y, frame
-    clear_canvas()
+    global running, arrows
     for i in range(0, 100 + 1, 4):
         frame = (frame + 1) % 8
         t = i / 100
-        character_x = (1 - t) * character_x + t * point_x
-        character_y = (1 - t) * character_y + t * point_y
-        if character_x > point_x:
+        if not arrows:
+            break
+        target_x, target_y = arrows[0]
+        character_x = (1 - t) * character_x + t * target_x
+        character_y = (1 - t) * character_y + t * target_y
+        if character_x > target_x:
             character.clip_draw(frame * 100, 10, 100, 80, character_x, character_y)  # left
-        elif character_x == point_x:
+        elif character_x == target_x:
             character.clip_draw(frame * 100, 310, 100, 80, character_x, character_y)  # left_stop
-            if arrows[0] == None:
-                running = False
             del arrows[0]
-        elif character_x < point_x:
+            if not arrows:
+                running = False  # arrows가 비어있으면 종료
+                break
+        elif character_x < target_x:
             character.clip_draw(frame * 100, 110, 100, 80, character_x, character_y)  # right
         update_canvas()
-        delay(0.05)
+        delay(0.2)
+
 
 
 while running:
@@ -65,3 +70,4 @@ while running:
     ground.draw(TUK_X // 2, TUK_Y // 2)
     mouse_events()
     handle_events()
+    character_move()
