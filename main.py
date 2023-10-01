@@ -15,7 +15,7 @@ character_x, character_y = 0, 0
 arrows = []
 
 def handle_events():
-    global running
+    global running, arrows
     global point_x, point_y
     events = get_events()
     for event in events:
@@ -24,6 +24,8 @@ def handle_events():
         elif event.type == SDL_MOUSEMOTION:
             point_x, point_y = event.x, TUK_Y - 1 - event.y
             arrow.clip_draw(0, 0, 50, 52, point_x, point_y)
+            for ax, ay in arrows:
+                arrow.clip_draw(0, 0, 50, 52, ax, ay)
             update_canvas()
 
 
@@ -43,9 +45,6 @@ def character_move():
     for i in range(0, 100 + 1, 4):
         frame = (frame + 1) % 8
         t = i / 100
-        ground.draw(TUK_X // 2, TUK_Y // 2)
-        for ax, ay in arrows:
-            arrow.clip_draw(0, 0, 50, 52, ax, ay)
         character_x = (1 - t) * character_x + t * point_x
         character_y = (1 - t) * character_y + t * point_y
         if character_x > point_x:
