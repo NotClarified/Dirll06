@@ -23,19 +23,27 @@ def handle_events():
             running = False
         elif event.type == SDL_MOUSEMOTION:
             point_x, point_y = event.x, TUK_Y - 1 - event.y
-        elif event.type == SDL_MOUSEBUTTONDOWN:
+            arrow.clip_draw(0, 0, 50, 52, point_x, point_y)
+            update_canvas()
+
+
+def mouse_events():
+    global running
+    global point_x, point_y
+    events = get_events()
+    for event in events:
+        if event.type == SDL_MOUSEBUTTONDOWN:
             point_x, point_y = event.x, TUK_Y - 1 - event.y
             arrows.append((point_x, point_y))
-            character_move()
 
 def character_move():
     global  point_x, point_y
     global character_x, character_y, frame
-    frame = (frame + 1) % 8
     clear_canvas()
-    ground.draw(TUK_X // 2, TUK_Y // 2)
     for i in range(0, 100 + 1, 4):
+        frame = (frame + 1) % 8
         t = i / 100
+        ground.draw(TUK_X // 2, TUK_Y // 2)
         for ax, ay in arrows:
             arrow.clip_draw(0, 0, 50, 52, ax, ay)
         character_x = (1 - t) * character_x + t * point_x
@@ -44,6 +52,8 @@ def character_move():
             character.clip_draw(frame * 100, 10, 100, 80, character_x, character_y)  # left
         elif character_x == point_x:
             character.clip_draw(frame * 100, 310, 100, 80, character_x, character_y)  # left_stop
+            if arrows[0] == None:
+                running = False
             del arrows[0]
         elif character_x < point_x:
             character.clip_draw(frame * 100, 110, 100, 80, character_x, character_y)  # right
@@ -54,5 +64,5 @@ def character_move():
 while running:
     clear_canvas()
     ground.draw(TUK_X // 2, TUK_Y // 2)
-    update_canvas()
+    mouse_events()
     handle_events()
