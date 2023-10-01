@@ -16,12 +16,13 @@ save_pointX = []
 save_pointY = []
 def canvas():
     clear_canvas()
-    ground.draw(TUK_X // 2, TUK_Y // 2)
+    ground.draw(TUK_X,TUK_Y)
+
 def make_arrow():
-    global  save_point
+    global  save_pointX, save_pointY
     canvas()
-    for i in len(save_point):
-        arrow.clip_draw(0, 0, 50, 52, save_pointX(i), save_pointY(i))
+    for i in range(len(save_pointX)):
+        arrow.clip_draw(0, 0, 50, 52, save_pointX[i], save_pointY[i])
    # update_canvas()
 def character_move():
     global character_x, character_y, frame
@@ -54,15 +55,15 @@ def character_move():
 
 def handle_events():
     global  running
-    global  point_x, point_y, save_point
+    global  point_x, point_y, save_pointX, save_pointY
     global  character_x, character_y
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
             running = False
-        elif event.type == SDL_MOUSE_TOUCHID:
-            save_point.append(event.x)
-            save_point.append(event.y)
+        elif event.type == SDL_MOUSEBUTTONDOWN:
+            save_pointX.append(event.x)
+            save_pointY.append(event.y)
             make_arrow()
             for i in range(0, 100 + 1, 4):
                 t = i / 100
@@ -74,5 +75,5 @@ def handle_events():
 while running:
     clear_canvas()
     ground.draw(TUK_X // 2, TUK_Y // 2)
-    update_canvas()
     handle_events()
+    update_canvas()
